@@ -3,7 +3,7 @@ import json
 import os
 
 from dateutil import parser
-from datetime import timezone
+#from datetime import timezone
 
 import friend as friendo
 
@@ -53,6 +53,7 @@ class NSASimulator:
             raise AuthenticationError("Couldn't find {secrets_filename}. Did you create it and put your Facebook user id and auth token in it?".format(secrets_filename=SECRETS_FILENAME))
 
     def _auth(self):
+        print "calling auth";
         """
         You can only log in to Tinder with Facebook.
 
@@ -63,10 +64,12 @@ class NSASimulator:
         connected to your Facebook account sorry fam.
 
         """
+        print self.fb_auth
         response = requests.post(self.BASE_URL + "auth", data=self.fb_auth)
+        print response
         if response.status_code == 200:
             self.headers["X-Auth-Token"] = response.json()["token"]
-            print("Authenticated to Tinder 🔒🔥")
+            print("Authenticated to Tinder")
             self.authed = True
         else:
             raise AuthenticationError("Hey your Tinder auth didn't work. Did you put your Facebook user id and auth token into {secrets_filename}?".format(secrets_filename=SECRETS_FILENAME))
@@ -76,24 +79,19 @@ class NSASimulator:
         if not self.authed:
             self._auth()
         response = requests.get(self.BASE_URL + url, headers=self.headers)
-        print(response.text)
+        #print(response.text)
         return response
 
     def get_facebook_friends_tinder_ids(self):
 
-        if not os.path.exists(".creepyfile"):
-            be_creepy = input("Sure you want to look at your Facebook friends' Tinder profiles? They might not like that. 🔒 [y/n]: ").lower() in ("y", "yes")
-
-            if not be_creepy:
-                raise MoralityException("😇 ")
+        request = None
+        for i in range(0, 3):
+            request = self._get("group/friends")
+            if request.status_code != 200:
+                continue;
+                #raise SquadError("Couldn't get info about your friends. Is Tinder Social enabled on your account? Hint: If you're not in Australia it probably isn't.")
             else:
-                with open(".creepyfile", "w") as f:
-                    f.write("😈")
-                print("🔌🌐🔌")
-
-        request = self._get("group/friends")
-        if request.status_code != 200:
-            raise SquadError("Couldn't get info about your friends. Is Tinder Social enabled on your account? Hint: If you're not in Australia it probably isn't.")
+                break;
 
         friend_data = request.json()
         for result in friend_data["results"]:
@@ -116,8 +114,8 @@ class NSASimulator:
 
         # Let's just put some smooth UX on that.
         extra_datums = {
-            "ping_time": self._to_local_time(profile_data["ping_time"]),
-            "birth_date": self._to_local_time(profile_data["birth_date"]),
+            #"ping_time": self._to_local_time(profile_data["ping_time"]),
+            #"birth_date": self._to_local_time(profile_data["birth_date"]),
             "like_url": self.BASE_URL + "like/" + friend.tid,
             "pass_url": self.BASE_URL + "pass/" + friend.tid
         }
