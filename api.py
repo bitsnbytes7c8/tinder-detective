@@ -7,8 +7,6 @@ from dateutil import parser
 
 import friend as friendo
 
-SECRETS_FILENAME = "SECRETS.json"
-
 
 class AuthenticationError(Exception):
     """Yeah it's really important to write extremely enterprise well-documented hacky API code. Hacker News will love it I swear."""
@@ -24,7 +22,7 @@ class NSASimulator:
 
     BASE_URL = "https://api.gotinder.com/"
 
-    def __init__(self, facebook_auth_filename=SECRETS_FILENAME):
+    def __init__(self, facebook_id, facebook_token):
 
         # Look I have no idea what these are I just copy/pasted
         # them from the API call my phone makes. If this makes
@@ -39,18 +37,12 @@ class NSASimulator:
             "os-version": 23,
             "platforms": "android"
         }
-        self._load_fb_auth()
+        self.facebook_data = {}
+        self.facebook_data['facebook_id'] = facebook_id
+        self.facebook_data['facebook_token'] = facebook_token
         self.authed = False
         self.profiles = None
         self.friends = set()
-
-
-    def _load_fb_auth(self):
-        if os.path.exists(SECRETS_FILENAME) and os.path.isfile(SECRETS_FILENAME):
-                with open(SECRETS_FILENAME) as f:
-                    self.fb_auth = json.load(f)
-        else:
-            raise AuthenticationError("Couldn't find {secrets_filename}. Did you create it and put your Facebook user id and auth token in it?".format(secrets_filename=SECRETS_FILENAME))
 
     def _auth(self):
         print "calling auth";
@@ -64,8 +56,7 @@ class NSASimulator:
         connected to your Facebook account sorry fam.
 
         """
-        print self.fb_auth
-        response = requests.post(self.BASE_URL + "auth", data=self.fb_auth)
+        response = requests.post(self.BASE_URL + "auth", data=self.facebook_data)
         print response
         if response.status_code == 200:
             self.headers["X-Auth-Token"] = response.json()["token"]

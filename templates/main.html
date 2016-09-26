@@ -7,60 +7,31 @@
 
      <link rel="stylesheet" href="../static/main.css">
 </head>
+
+<div class="container">
+    <section class="header">
+        <h1 class="title">Tinder detective I guess</h1>
+
+        <p class="slogan"><a class="slogan" href="http://blog.gotinder.com/introducing-tinder-social/">"It's important to note Tinder's not a secret considering 70% of users download Tinder because their friends recommend it."</a></p>
+    </section>
+</div>
+
 <body>
     <div class="container">
-        <section class="header">
-            <h1 class="title">Tinder detective I guess</h1>
+    <form id="facebook_details_form" action = "/friends" method="Post">
+        Enter facebook_id: <input type="text" name="facebook_id" size="40" placeholder="Enter your facebook_id"> <br/><br/>
+        Enter tinder access_token: <input type="text" name="facebook_token" size="100" placeholder="Enter your facebook access token for tinder"> <br/>  <a href="https://github.com/bitsnbytes7c8/tinder-detective/blob/master/README.md"> Here's how to get your tinder access_token </a>
+    </form>
+    <br/>
+    <button type="submit" form="facebook_details_form" value="Submit">Submit</button>
 
-            <p class="slogan"><a class="slogan" href="http://blog.gotinder.com/introducing-tinder-social/">"It's important to note Tinder's not a secret considering 70% of users download Tinder because their friends recommend it."</a></p>
-        </section>
+    <p>
+        <ul>
+            <li> Much of the code has been forked from <a href="https://github.com/defaultnamehere/tinder-detective"> here </a>. I only added a few cosmetic touches to it. </li>
+            <li> Your tinder access_token should be private, since people who get hold of this could access your tinder account using this. Just as this app does. But you can trust this app. Here's the <a href="https://github.com/bitsnbytes7c8/tinder-detective"> source code for this app </a>. </li>
+            <li> I have built in zero security features for this app since this was more of a hack than a serious project. And your token is probably being sent through an unencrypted connection, so I can't guarantee that someone else wouldn't get hold of this. But they've very short expiration dates and it probably won't do enough damage to you even if it was leaked. </li>
+            <li> To the really security conscious and tech-savy, here're the instructions on <a href="https://github.com/bitsnbytes7c8/tinder-detective/blob/master/README.md"> how to run this on your own computer </a> instead so that you won't have much privacy concerns. </li>
+            </ul>
+        </p>
     </div>
-
-    <section class="container">
-        {% for profile in profiles %}
-        <section class="profile">
-            <section class="photos container">
-                {% for photo in profile.photos %}
-                    <img class="profile-photo" src="{{ photo.url }}"/>
-                {% endfor %}
-            </section>
-
-            <div class="container">
-                <h3>{{ profile.name }}</h3>
-            </div>
-
-            <div class="container">
-              <div class="row">
-                <div class="col-sm-4">
-                    <p class="bio"> {{ profile.bio }}</p>
-                </div>
-                <div class="col-sm-4">
-                    <p class="misc"> Last online: {{ profile.ping_time }}</p>
-                    <p class="misc"> Birthday: {{ profile.birth_date }}</p>
-                    <p class="misc"> Distance away (miles): {{ profile.distance_mi}}</p>
-                    <p class="misc"> Jobs: {{ profile.jobs or None }}</p>
-                    <p class="misc"> Schools: {{ profile.schools or None }}</p>
-                </div>
-                <div class="col-sm-4">
-                    <p class="misc"> Connection count: {{ profile.connection_count }}</p>
-                    <p class="misc">Common like count: {{ profile.common_like_count }}</p>
-                    <p class="misc"> Common friend count: {{ profile.common_friend_count }}</p>
-                    <p class="misc"> Common likes: {{ profile.common_likes or None}}</p>
-                    <p class="misc"> Badges: {{ profile.badges or None }}</p>
-                </div>
-              </div>
-          </div>
-          <section class="buttons container">
-              <a href="{{ profile.like_url }}"><button class="btn btn-success">Swipe right</button></a>
-              <a href="{{ profile.pass_url }}"><button class="btn btn-danger">Swipe left</button></a>
-          </section>
-
-        </section>
-        {% endfor %}
-    </section>
-
-
-<script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js" crossorigin="anonymous"></script>
 </body>
-
-</html>
